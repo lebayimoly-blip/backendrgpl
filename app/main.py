@@ -6,6 +6,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.status import HTTP_401_UNAUTHORIZED
+from sqlalchemy.orm import Session
 
 from app.config import settings
 from app.database import Base, engine, SessionLocal, get_db
