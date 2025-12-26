@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0d6efd" />
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="icon" href="/static/icons/icon-192.png" />
+  <link rel="stylesheet" href="/static/style.css" />
+  <title>Créer une famille</title>
+</head>
+<body>
+  <main>
+    <h2>Créer une famille</h2>
+    <p>⏱ Temps de remplissage : <span id="timer">0</span> secondes</p>
+
+    <form id="createFamilyForm" enctype="multipart/form-data">
+      <label>Nom de la famille :</label>
+      <input type="text" id="familyName" name="name" required /><br />
+
+      <label>📷 Photo du logement / code recensement :</label>
+      <input type="file" id="housePhoto" name="photo" accept="image/*" capture="environment" /><br />
+
+      <h3>Personne racine</h3>
+      <label>Prénom :</label><input type="text" id="firstName" name="first_name" required />
+      <label>Nom :</label><input type="text" id="lastName" name="last_name" required />
+      <label>Date de naissance :</label><input type="date" id="dob" name="date_of_birth" required />
+      <label>Genre :</label>
+      <select id="gender" name="gender">
+        <option value="male">Homme</option>
+        <option value="female">Femme</option>
+        <option value="other">Autre</option>
+      </select>
+      <label>Nationalité :</label><input type="text" id="nationality" name="nationality" required />
+      <label>Type de pièce :</label><input type="text" id="idType" name="id_type" required />
+      <label>Numéro de pièce :</label><input type="text" id="idNumber" name="id_number" required />
+      <label>Lieu de naissance :</label><input type="text" id="placeOfBirth" name="place_of_birth" required />
+      <label>Province :</label><input type="text" id="province" name="province" required />
+      <label>Ville :</label><input type="text" id="city" name="city" required />
+      <label>Quartier :</label><input type="text" id="district" name="district" required />
+
+      <button type="submit">Créer la famille</button>
+    </form>
+
+    <hr />
+
+    <div id="membersSection" style="display: none;">
+      <h3>Ajouter un membre</h3>
+      <form id="addMemberForm">
+        <label>Prénom :</label><input type="text" id="m_firstName" required />
+        <label>Nom :</label><input type="text" id="m_lastName" required />
+        <label>Rôle :</label><input type="text" id="m_role" />
+        <label>Date de naissance :</label><input type="date" id="m_dob" />
+        <label>Genre :</label>
+        <select id="m_gender">
+          <option value="male">Homme</option>
+          <option value="female">Femme</option>
+          <option value="other">Autre</option>
+        </select>
+        <label>Nationalité :</label><input type="text" id="m_nationality" />
+        <label>Type de pièce :</label><input type="text" id="m_idType" />
+        <label>Numéro de pièce :</label><input type="text" id="m_idNumber" />
+        <label>Lieu de naissance :</label><input type="text" id="m_placeOfBirth" />
+        <label>Province :</label><input type="text" id="m_province" />
+        <label>Ville :</label><input type="text" id="m_city" value="Libreville" />
+        <label>Quartier :</label><input type="text" id="m_district" />
+        <button type="submit">Ajouter membre</button>
+      </form>
+
+      <button id="geoBtn">📍 Géolocaliser le logement</button>
+      <p id="geoResult"></p>
+
+      <div class="mt-3">
+        <a href="/page-familles" class="btn btn-outline-primary" id="finishBtn">✅ Terminer et revenir à la liste</a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    let currentFamilyId = null;
+    let startTime = Date.now();
+
+    setInterval(() => {
+      let elapsed = Math.floor((Date.now() - startTime) / 1000);
+      document.getElementById("timer").innerText = elapsed;
+    }, 1000);
+
+    document.getElementById("createFamilyForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+
+      try {
+        const familyResponse = await fetch("/familles/", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!familyResponse.ok) throw new Error("Erreur lors de la création de la famille");
+
+        const family = await familyResponse.json();
+        currentFamilyId = family.id;
+
+        alert("Famille créée !");
+        document.getElementById("membersSection").style.display = "block";
+        e.target.reset();
+      } catch (error) {
+        alert(error.message);
+      }
+    });
+
+    document.getElementById("addMemberForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!currentFamilyId) {
+        alert("Créez d'abord une famille !");
+        return;
+      }
+
+      const member = {
+        first_name: document.getElementById("m_firstName").value,
+        last_name: document.getElementById("m_lastName").value,
+        role: document.getElementById("m_role").value,
+        date_of_birth: document.getElementById("m_dob").value,
+        gender: document.getElementById("m_gender").value,
+        nationality: document.getElementById("m_nationality").value,
+        id_type: document.getElementById("m_idType").value,
+        id_number: document.getElementById("m_idNumber").value,
+        place_of_birth: document.getElementById("m_placeOfBirth").value,
+        province: document.getElementById("m_province").value,
+        city: document.getElementById("m_city").value,
+        district: document.getElementById("m_district").value,
+      };
+
+      try {
+        const response = await fetch(`/familles/${currentFamilyId}/members`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(member),
+        });
+
+        if (!response.ok) throw new Error("Erreur lors de l'ajout du membre");
+
+        alert("Membre ajouté !");
+        e.target.reset();
+      } catch (error) {
+        alert(error.message);
+      }
+    });
+
+    document.getElementById("geoBtn").addEventListener("click", () => {
+      if (!navigator.geolocation) {
+        alert("La géolocalisation n'est pas supportée par ce navigateur.");
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          document.getElementById("geoResult").innerText = `Latitude: ${lat}, Longitude: ${lon}`;
+
+          if (currentFamilyId) {
+            fetch(`/familles/${currentFamilyId}/localisation`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ latitude: lat, longitude: lon }),
+            }).then((r) => {
+              if (!r.ok) alert("Erreur lors de l'enregistrement de la localisation");
+            });
+          }
+        },
+        (error) => {
+          alert("Impossible de récupérer la localisation : " + error.message);
+        }
+      );
+    });
+
+    document.getElementById("finishBtn").addEventListener("click", () => {
+      let elapsed = Math.floor((Date.now() - startTime) / 1000);
+
+      if (currentFamilyId) {
+        fetch(`/familles/${currentFamilyId}/duree`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ duree_remplissage: elapsed }),
+        }).then((r) => {
+          if (!r.ok) alert("Erreur lors de l'enregistrement du temps de remplissage");
+        });
+      }
+    });
+  </script>
+</body>
+</html>

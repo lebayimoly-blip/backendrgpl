@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Détails de la famille</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f9f9f9;
+      color: #1C3D7A;
+      margin: 0;
+      padding: 2rem;
+    }
+
+    main {
+      max-width: 900px;
+      margin: auto;
+      background: #fff;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h2, h3 {
+      text-align: center;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 0.6rem;
+      text-align: left;
+    }
+
+    th {
+      background-color: #e9ecef;
+    }
+
+    .highlight {
+      background-color: #fff3cd;
+    }
+
+    .btn {
+      margin-top: 1.5rem;
+      padding: 0.6rem 1rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .btn-secondary {
+      background-color: #6c757d;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background-color: #5a6268;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h2>Famille : {{ famille.name }}</h2>
+
+    <p><strong>Durée de remplissage :</strong> {{ famille.duree_remplissage }} sec</p>
+    <p><strong>Latitude :</strong> {{ famille.latitude }}</p>
+    <p><strong>Longitude :</strong> {{ famille.longitude }}</p>
+
+    {% if famille.photo_path %}
+    <p><strong>Photo du logement :</strong></p>
+    <img src="/uploads/{{ famille.photo_path }}" alt="Photo logement" width="300" style="border-radius: 8px;" />
+    {% endif %}
+
+    <div style="border: 2px solid #ffc107; padding: 15px; margin: 20px 0; background-color: #fff8e1;">
+      <h3>🎯 Personne cible</h3>
+      <p><strong>Nom :</strong> {{ famille.first_name }} {{ famille.last_name }}</p>
+      <p><strong>Genre :</strong> {{ famille.gender }}</p>
+      <p><strong>Date de naissance :</strong> {{ famille.date_of_birth }}</p>
+      <p><strong>Nationalité :</strong> {{ famille.nationality }}</p>
+      <p><strong>Type de pièce :</strong> {{ famille.id_type }}</p>
+      <p><strong>Numéro de pièce :</strong> {{ famille.id_number }}</p>
+      <p><strong>Lieu de naissance :</strong> {{ famille.place_of_birth }}</p>
+      <p><strong>Province :</strong> {{ famille.province }}</p>
+      <p><strong>Ville :</strong> {{ famille.city }}</p>
+      <p><strong>Quartier :</strong> {{ famille.district }}</p>
+    </div>
+
+    <h3>Liste des habitants</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Prénom</th><th>Nom</th><th>Rôle</th><th>Genre</th><th>Date de naissance</th><th>Nationalité</th>
+          <th>Type de pièce</th><th>Numéro de pièce</th><th>Lieu de naissance</th><th>Province</th><th>Ville</th><th>Quartier</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for membre in famille.membres %}
+        <tr {% if membre.role == "Personne cible" %}class="highlight"{% endif %}>
+          <td>{{ membre.first_name }}</td>
+          <td>{{ membre.last_name }}</td>
+          <td>{{ membre.role }}{% if membre.role == "Personne cible" %} ⭐{% endif %}</td>
+          <td>{{ membre.gender }}</td>
+          <td>{{ membre.date_of_birth }}</td>
+          <td>{{ membre.nationality }}</td>
+          <td>{{ membre.id_type }}</td>
+          <td>{{ membre.id_number }}</td>
+          <td>{{ membre.place_of_birth }}</td>
+          <td>{{ membre.province }}</td>
+          <td>{{ membre.city }}</td>
+          <td>{{ membre.district }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <div style="text-align:center; margin-top: 2rem;">
+      <a href="/page-familles" class="btn btn-secondary">⬅️ Retour</a>
+    </div>
+  </main>
+</body>
+</html>

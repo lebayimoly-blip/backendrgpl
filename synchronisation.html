@@ -1,0 +1,17 @@
+<body>
+  <h2>📡 Suivi des synchronisations</h2>
+  <p id="status-connexion">État de la connexion : <strong>...</strong></p>
+  <h3>🕓 Données en attente de synchronisation</h3>
+  <table border="1" cellpadding="8" cellspacing="0">
+    <thead>
+      <tr>
+        <th>#</th><th>Nom</th><th>Quartier</th><th>Date d’enregistrement</th>
+      </tr>
+    </thead>
+    <tbody id="pending-table">
+      <tr><td colspan="4">Chargement...</td></tr>
+    </tbody>
+  </table>
+  <button id="forceSyncBtn" class="btn btn-warning">🔁 Forcer la synchronisation</button>
+  <script src="/static/js/sync-status.js"></script>
+</body>

@@ -1,0 +1,206 @@
+/* 🎨 Palette premium inspirée du drapeau gabonais */
+:root {
+  --gabon-green: #006B3F;
+  --gabon-yellow: #FFD700;
+  --gabon-blue: #1C3D7A;
+  --text-dark: #222;
+  --text-light: #fff;
+  --bg-light: #f9f9f9;
+}
+
+/* 🔄 Reset général */
+body {
+  margin: 0;
+  font-family: "Segoe UI", Roboto, sans-serif;
+  background-color: var(--bg-light);
+  color: var(--text-dark);
+}
+
+/* 🧭 En-tête */
+header {
+  background: linear-gradient(90deg, var(--gabon-green), var(--gabon-yellow), var(--gabon-blue));
+  color: var(--text-light);
+  padding: 1rem;
+  text-align: center;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+/* 🧭 Menu de navigation */
+nav {
+  margin-top: 0.5rem;
+}
+
+.menu {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  padding: 0;
+  margin: 0;
+}
+
+.menu li {
+  list-style: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.menu a {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  color: var(--text-light);
+  text-decoration: none;
+  font-weight: 600;
+  padding: 0.5em 1em;
+  border-radius: 6px;
+  background-color: transparent;
+  transition: background-color 0.3s ease;
+}
+
+.menu a:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* 🖼️ Icônes SVG */
+.icon {
+  width: 1em;
+  height: 1em;
+  vertical-align: middle;
+  fill: currentColor;
+  margin-right: 0.5em;
+}
+
+/* 📄 Contenu principal */
+main {
+  padding: 2rem;
+}
+
+/* 📱 Conteneur fluide */
+.container {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* 🔘 Boutons généraux (hors menu) */
+button, .btn {
+  background-color: var(--gabon-blue);
+  color: white;
+  padding: 10px 16px;
+  margin: 5px 0;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+button:hover, .btn:hover {
+  background-color: var(--gabon-green);
+  color: white;
+}
+
+/* 🔘 Bouton de déconnexion */
+#logoutForm button {
+  background-color: var(--gabon-green);
+  color: white;
+  border: none;
+}
+
+#logoutForm button:hover {
+  background-color: #dc3545;
+  color: white;
+}
+
+/* 🔘 Variantes de boutons */
+.btn-sm {
+  padding: 6px 10px;
+  font-size: 0.9em;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: #0069d9;
+}
+
+.btn-warning {
+  background-color: #ffc107;
+  color: black;
+  border: none;
+}
+
+.btn-warning:hover {
+  background-color: #e0a800;
+}
+
+/* 📎 Pied de page */
+footer {
+  background-color: var(--gabon-blue);
+  color: var(--text-light);
+  text-align: center;
+  padding: 1rem;
+  margin-top: 2rem;
+  font-size: 0.9rem;
+}
+
+/* 📋 Liste des familles */
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+ul li {
+  background: #fff;
+  border: 1px solid #ddd;
+  margin: 0.5rem 0;
+  padding: 1rem;
+  border-radius: 6px;
+  transition: box-shadow 0.3s ease;
+}
+
+ul li:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* 🔽 Détails repliables */
+.details {
+  background: #f0f8ff;
+  border-left: 4px solid var(--gabon-green);
+  margin-top: 0.5rem;
+  padding: 1rem;
+  border-radius: 4px;
+}
+
+/* 📱 Responsive mobile */
+@media (max-width: 600px) {
+  main {
+    padding: 1rem;
+  }
+
+  .menu {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .menu a {
+    justify-content: center;
+    font-size: 1rem;
+  }
+
+  button, .btn {
+    width: 100%;
+    font-size: 1rem;
+  }
+}

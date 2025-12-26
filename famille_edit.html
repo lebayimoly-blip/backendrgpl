@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0d6efd" />
+  <title>Modifier une famille</title>
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="icon" href="/static/icons/icon-192.png" />
+  <link rel="stylesheet" href="/static/style.css" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f9f9f9;
+      color: #1C3D7A;
+      margin: 0;
+      padding: 2rem;
+    }
+
+    main {
+      max-width: 800px;
+      margin: auto;
+      background: #fff;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h2, h3 {
+      text-align: center;
+    }
+
+    form {
+      margin-top: 1rem;
+    }
+
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.3rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    button {
+      margin-top: 1.5rem;
+      padding: 0.8rem 1.2rem;
+      background-color: #0d6efd;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #084298;
+    }
+
+    .btn-outline-secondary {
+      background-color: transparent;
+      border: 1px solid #ccc;
+      color: #333;
+    }
+
+    .btn-outline-secondary:hover {
+      background-color: #eee;
+    }
+
+    .membre-form {
+      margin-top: 1rem;
+      padding: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #fdfdfd;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      margin-bottom: 1rem;
+    }
+
+    .actions {
+      margin-top: 2rem;
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h2>✏️ Modifier la famille</h2>
+
+    <form method="post" action="/familles/{{ famille.id }}/update" enctype="multipart/form-data">
+      <label>Nom de la famille :</label>
+      <input type="text" name="name" value="{{ famille.name }}" required />
+
+      <h3>Personne cible</h3>
+      <label>Prénom :</label><input type="text" name="first_name" value="{{ famille.first_name }}" required />
+      <label>Nom :</label><input type="text" name="last_name" value="{{ famille.last_name }}" required />
+      <label>Date de naissance :</label><input type="date" name="date_of_birth" value="{{ famille.date_of_birth }}" required />
+      <label>Genre :</label>
+      <select name="gender">
+        <option value="male" {% if famille.gender == 'male' %}selected{% endif %}>Homme</option>
+        <option value="female" {% if famille.gender == 'female' %}selected{% endif %}>Femme</option>
+        <option value="other" {% if famille.gender == 'other' %}selected{% endif %}>Autre</option>
+      </select>
+      <label>Nationalité :</label><input type="text" name="nationality" value="{{ famille.nationality }}" required />
+      <label>Type de pièce :</label><input type="text" name="id_type" value="{{ famille.id_type }}" required />
+      <label>Numéro de pièce :</label><input type="text" name="id_number" value="{{ famille.id_number }}" required />
+      <label>Lieu de naissance :</label><input type="text" name="place_of_birth" value="{{ famille.place_of_birth }}" required />
+      <label>Province :</label><input type="text" name="province" value="{{ famille.province }}" required />
+      <label>Ville :</label><input type="text" name="city" value="{{ famille.city }}" required />
+      <label>Quartier :</label><input type="text" name="district" value="{{ famille.district }}" required />
+
+      <label>📷 Nouvelle photo du logement (optionnel) :</label>
+      <input type="file" name="photo" accept="image/*" />
+
+      <button type="submit">💾 Enregistrer les modifications</button>
+    </form>
+
+    <hr>
+
+    <h3>👥 Membres de la famille</h3>
+    <ul>
+      {% for membre in membres %}
+      <li>
+        <strong>{{ membre.first_name }} {{ membre.last_name }}</strong> – {{ membre.role }}
+        <button type="button" onclick="toggleForm({{ membre.id }})" class="btn btn-sm btn-outline-secondary" style="margin-left: 10px;">✏️ Modifier</button>
+        <form method="post" action="/familles/{{ famille.id }}/members/{{ membre.id }}/update" class="membre-form" id="form-{{ membre.id }}" style="display: none;">
+          <label>Prénom :</label><input type="text" name="first_name" value="{{ membre.first_name }}" required />
+          <label>Nom :</label><input type="text" name="last_name" value="{{ membre.last_name }}" required />
+          <label>Rôle :</label><input type="text" name="role" value="{{ membre.role }}" />
+          <label>Date de naissance :</label><input type="date" name="date_of_birth" value="{{ membre.date_of_birth }}" />
+          <label>Genre :</label>
+          <select name="gender">
+            <option value="male" {% if membre.gender == 'male' %}selected{% endif %}>Homme</option>
+            <option value="female" {% if membre.gender == 'female' %}selected{% endif %}>Femme</option>
+            <option value="other" {% if membre.gender == 'other' %}selected{% endif %}>Autre</option>
+          </select>
+          <!-- Ajoute ici les autres champs si nécessaire -->
+          <button type="submit" class="btn btn-sm btn-success">💾 Enregistrer</button>
+        </form>
+      </li>
+      {% endfor %}
+    </ul>
+
+    <div class="actions">
+      <a href="/familles/{{ famille.id }}/members/add" class="btn btn-sm btn-success">➕ Ajouter un membre</a>
+      <a href="/page-familles" class="btn btn-outline-secondary">⬅️ Retour à la liste</a>
+    </div>
+  </main>
+
+  <script>
+    function toggleForm(id) {
+      const forms = document.querySelectorAll('.membre-form');
+      forms.forEach(f => f.style.display = 'none');
+      const form = document.getElementById('form-' + id);
+      if (form) form.style.display = 'block';
+    }
+  </script>
+</body>
+</html>

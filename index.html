@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0d6efd">
+
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="static/icons/icon-192.png">
+  <link rel="stylesheet" href="static/style.css">
+
+  <title>RGPL - Tableau de bord</title>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      const swUrl = `${location.origin}/rgplweb/service-worker.js`;
+      navigator.serviceWorker.register(swUrl)
+        .then(() => console.log('✅ Service Worker enregistré'))
+        .catch(err => console.error('❌ Échec SW', err));
+    }
+  </script>
+</head>
+
+<body>
+  <!-- Injection dynamique des symboles SVG -->
+  <div id="svg-sprite-container"></div>
+  <script>
+    fetch("static/icons/icons.svg")
+      .then(res => res.text())
+      .then(svg => {
+        document.getElementById("svg-sprite-container").innerHTML = svg;
+      });
+  </script>
+
+  <!-- Barre de navigation -->
+  <header>
+    <nav>
+      <ul class="menu">
+        <li><a href="#"><svg class="icon"><use href="#icon-stats"/></svg><span>Accueil</span></a></li>
+        <li><a href="#"><span>🗺️ Définir zone de travail</span></a></li>
+        <li><a href="#"><svg class="icon"><use href="#icon-familles"/></svg><span>Familles</span></a></li>
+        <li><a href="#"><svg class="icon"><use href="#icon-users"/></svg><span>Utilisateurs</span></a></li>
+        <li><a href="#"><svg class="icon"><use href="#icon-stats"/></svg><span>Statistiques</span></a></li>
+        <li><a href="#"><svg class="icon"><use href="#icon-users"/></svg><span>🔁 Doublons</span></a></li>
+        <li><a href="#"><svg class="icon"><use href="#icon-sync"/></svg><span>Synchronisation</span></a></li>
+        <li><a href="#"><svg class="icon"><use href="#icon-familles"/></svg><span>➕ Ajouter une famille</span></a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Contenu principal -->
+  <main style="padding: 2rem;">
+    <h2 style="text-align:center; margin-top: 20px;">
+      Bienvenue agent_recenseur
+    </h2>
+
+    <div style="width:100%; overflow:hidden;">
+      <img src="static/images/famille.png" alt="Famille africaine"
+           style="width:100%; height:auto; max-height:500px; object-fit:cover;">
+    </div>
+
+    <h2 style="text-align:center;">📊 Quelques chiffres du recensement</h2>
+
+    <div style="display: flex; justify-content: space-around; margin-top: 30px; flex-wrap: wrap; gap: 20px;">
+      <div style="background-color: #4CAF50; color: white; padding: 20px; border-radius: 10px; width: 250px; text-align: center;">
+        <h3>Familles enregistrées</h3>
+        <p style="font-size: 2em;" id="familles">...</p>
+      </div>
+
+      <div style="background-color: #2196F3; color: white; padding: 20px; border-radius: 10px; width: 250px; text-align: center;">
+        <h3>Total habitants</h3>
+        <p style="font-size: 2em;" id="membres">...</p>
+      </div>
+
+      <div style="background-color: #FF9800; color: white; padding: 20px; border-radius: 10px; width: 250px; text-align: center;">
+        <h3>Habitants de Libreville</h3>
+        <p style="font-size: 2em;" id="libreville">...</p>
+      </div>
+
+      <div style="background-color: #f44336; color: white; padding: 20px; border-radius: 10px; width: 250px; text-align: center;">
+        <h3>Doublons détectés</h3>
+        <p style="font-size: 2em;" id="doublons">...</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer style="background-color:#1C3D7A; padding:1rem 0;">
+    <div style="text-align:center; margin-bottom: 1rem;">
+      <button class="btn btn-danger" onclick="alert('Déconnexion désactivée en mode statique')">🚪 Déconnexion</button>
+    </div>
+    <p style="text-align:center; color:white;">© 2025 - RGPL Libreville</p>
+    <p style="text-align:center; color:white;">
+      Application développée par 
+      <span style="color:yellow; font-weight:bold;">OLOUOMO LAB</span>
+    </p>
+  </footer>
+
+  <!-- Scripts JS -->
+  <script src="static/js/db.js" defer></script>
+  <script src="static/js/main.js" defer></script>
+  <script>
+    fetch("static/data/stats.json")
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("familles").textContent = data.total_familles || 0;
+        document.getElementById("membres").textContent = data.total_membres || 0;
+        document.getElementById("libreville").textContent = data.libreville_membres || 0;
+        document.getElementById("doublons").textContent = data.total_doublons || 0;
+      })
+      .catch(() => {
+        document.getElementById("familles").textContent = "N/A";
+        document.getElementById("membres").textContent = "N/A";
+        document.getElementById("libreville").textContent = "N/A";
+        document.getElementById("doublons").textContent = "N/A";
+      });
+  </script>
+
+  <script type="module">
+  import { loginUser } from "./api.js";
+
+  document.addEventListener("DOMContentLoaded", () => {
+    if (form) {
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const username = document.querySelector("#username").value;
+        const password = document.querySelector("#password").value;
+
+        try {
+          const data = await loginUser(username, password);
+          localStorage.setItem("token", data.access_token);
+          window.location.href = "menu.html";
+        } catch (err) {
+          alert("Erreur de connexion");
+        }
+      });
+    }
+  });
+   </script>
+
+</body>
+</html>

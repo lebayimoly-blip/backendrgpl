@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0d6efd" />
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="icon" href="/static/icons/icon-192.png" />
+  <link rel="stylesheet" href="/static/style.css" />
+  <title>Statistiques</title>
+</head>
+<body>
+  <main style="padding: 2rem;">
+    <h1>Statistiques globales</h1>
+
+    <p><strong>Total familles :</strong> <span id="totalFamilles">...</span></p>
+    <p><strong>Total membres :</strong> <span id="totalMembres">...</span></p>
+
+    <hr />
+
+    <form id="filtreForm" style="margin-bottom: 20px;">
+      <label>📅 Filtrer par année :</label>
+      <input type="number" name="annee" placeholder="ex: 2023" />
+      <label>ou depuis (années) :</label>
+      <input type="number" name="depuis" placeholder="ex: 5" />
+      <button type="submit">Appliquer</button>
+    </form>
+
+    <p id="filtreActif"></p>
+
+    <hr />
+
+    <h2>Répartition par genre</h2>
+    <canvas id="genreChart" width="400" height="200"></canvas>
+
+    <h2>Répartition par province</h2>
+    <canvas id="provinceChart" width="400" height="200"></canvas>
+
+    <h2>Répartition des rôles</h2>
+    <canvas id="roleChart" width="400" height="200"></canvas>
+
+    <h2>Répartition par ville</h2>
+    <canvas id="villeChart" width="400" height="200"></canvas>
+
+    <h2>Taux de natalité par année</h2>
+    <canvas id="birthChart" width="400" height="200"></canvas>
+
+    <hr />
+    <button onclick="exportStatsCSV()">📥 Exporter les statistiques</button>
+    <a href="/" class="btn btn-primary">⬅️ Retour</a>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    fetch("/static/data/stats.json")
+      .then(res => res.json())
+      .then(stats => {
+        document.getElementById("totalFamilles").textContent = stats.total_familles || 0;
+        document.getElementById("totalMembres").textContent = stats.total_membres || 0;
+
+        if (stats.filtre_annee) {
+          document.getElementById("filtreActif").textContent = "Filtre actif : année = " + stats.filtre_annee;
+        } else if (stats.filtre_depuis) {
+          document.getElementById("filtreActif").textContent = "Filtre actif : depuis " + stats.filtre_depuis + " an(s)";
+        }
+
+        if (stats.genres) createPieChart("genreChart", stats.genres, "Répartition globale par genre", ['#006B3F', '#FFD700', '#1C3D7A']);
+        if (stats.provinces) createBarChart("provinceChart", stats.provinces, "Répartition par province", "Nombre de familles", "#1C3D7A");
+        if (stats.roles) createPieChart("roleChart", stats.roles, "Répartition des rôles", ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0']);
+        if (stats.villes) createBarChart("villeChart", stats.villes, "Répartition par ville", "Nombre de membres", "#36A2EB");
+        if (stats.naissances) createPieChart("birthChart", stats.naissances, "Naissances par année", ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40']);
+
+        window.statsData = stats;
+      });
+
+    function createPieChart(id, data, title, colors) {
+      new Chart(document.getElementById(id).getContext("2d"), {
+        type: "pie",
+        data: {
+          labels: Object.keys(data),
+          datasets: [{
+            data: Object.values(data),
+            backgroundColor: colors
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: "bottom" },
+            title: { display: true, text: title }
+          }
+        }
+      });
+    }
+
+    function createBarChart(id, data, title, label, color) {
+      new Chart(document.getElementById(id).getContext("2d"), {
+        type: "bar",
+        data: {
+          labels: Object.keys(data),
+          datasets: [{
+            label: label,
+            data: Object.values(data),
+            backgroundColor: color
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            title: { display: true, text: title }
+          },
+          scales: { y: { beginAtZero: true } }
+        }
+      });
+    }
+
+    function exportStatsCSV() {
+      const datasets = window.statsData || {};
+      let csv = "Catégorie,Clé,Nombre\n";
+
+      for (const [category, data] of Object.entries(datasets)) {
+        if (typeof data === "object" && !Array.isArray(data)) {
+          for (const [key, value] of Object.entries(data)) {
+            csv += `${category},${key},${value}\n`;
+          }
+        }
+      }
+
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "statistiques.csv";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  </script>
+</body>
+</html>

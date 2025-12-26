@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Utilisateurs - RGPL</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f4f4;
+      color: #1C3D7A;
+      margin: 0;
+      padding: 2rem;
+    }
+
+    h1, h3 {
+      text-align: center;
+    }
+
+    form {
+      max-width: 500px;
+      margin: 2rem auto;
+      background-color: #fff;
+      padding: 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.3rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    button {
+      margin-top: 1.5rem;
+      width: 100%;
+      padding: 0.8rem;
+      background-color: #0d6efd;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #084298;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      max-width: 700px;
+      margin: 2rem auto;
+    }
+
+    li {
+      background-color: #fff;
+      margin-bottom: 1rem;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .delete-form {
+      margin: 0;
+    }
+
+    .delete-form button {
+      background-color: red;
+      color: white;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .delete-form button:hover {
+      background-color: darkred;
+    }
+  </style>
+</head>
+<body>
+  <h1>👥 Gestion des utilisateurs</h1>
+
+  <form method="post" action="/utilisateurs" onsubmit="return setProvinceId()">
+    <label for="username">Nom d'utilisateur :</label>
+    <input type="text" id="username" name="username" required />
+
+    <label for="password">Mot de passe :</label>
+    <input type="password" id="password" name="password" required />
+
+    <label for="role">Rôle :</label>
+    <select name="role" required>
+      <option value="agent_recenseur">Agent recenseur</option>
+      <option value="superviseur_provincial">Superviseur provincial</option>
+      <option value="super_admin">Super admin</option>
+    </select>
+
+    <label for="province_nom">Province :</label>
+    <input type="text" id="province_nom" name="province_nom" placeholder="ex: Estuaire" required />
+    <input type="hidden" id="province_id" name="province_id" />
+
+    <button type="submit">➕ Créer l'utilisateur</button>
+  </form>
+
+  <h3>📋 Liste des utilisateurs</h3>
+  <ul>
+    {% for user in utilisateurs %}
+      <li>
+        {{ user.username }} – rôle : {{ user.role }} – province : {{ user.province.nom if user.province else "N/A" }}
+        <form class="delete-form" action="/utilisateurs/{{ user.id }}/delete" method="post">
+          <button type="submit">🗑️ Supprimer</button>
+        </form>
+      </li>
+    {% endfor %}
+  </ul>
+
+  <script>
+    function setProvinceId() {
+      const nom = document.getElementById("province_nom").value.trim().toLowerCase();
+      const mapping = {
+        "estuaire": 1,
+        "haut-ogooué": 2,
+        "moyen-ogooué": 3,
+        "ngounié": 4,
+        "nyanga": 5,
+        "ogooué-ivindo": 6,
+        "ogooué-lolo": 7,
+        "ogooué-maritime": 8,
+        "woleu-ntem": 9
+      };
+      const id = mapping[nom];
+      if (!id) {
+        alert("Nom de province invalide. Veuillez utiliser un nom exact.");
+        return false;
+      }
+      document.getElementById("province_id").value = id;
+      return true;
+    }
+  </script>
+</body>
+</html>
