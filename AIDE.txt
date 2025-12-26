@@ -1,0 +1,10 @@
+python -m uvicorn app.main:app
+psql -U postgres
+postgres-# \l
+\c recense
+# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
+
+  
+
+Souhaites-tu que je t’aide à créer un script pour corriger les familles déjà enregistrées et leur ajouter la personne cible comme membre ?
