@@ -5,6 +5,7 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
+from app import schemas, database
 
 from app.database import get_db
 from app import models
@@ -35,7 +36,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # 📌 OAuth2
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -84,5 +85,11 @@ def read_users_me(token: str = Depends(oauth2_scheme), db: Session = Depends(get
     if user is None:
         raise HTTPException(status_code=404, detail="Utilisateur non trouvé")
     return {"username": user.username, "role": user.role}
+
+# --- Liste des utilisateurs (JSON API) ---
+@router.get("/json", response_model=list[schemas.UtilisateurResponse])
+def get_utilisateurs(db: Session = Depends(database.get_db)):
+    return db.query(models.Utilisateur).all()
+
 
 __all__ = ["get_current_user"]

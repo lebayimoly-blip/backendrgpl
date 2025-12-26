@@ -7,8 +7,10 @@ import csv
 import io
 import json
 
-router = APIRouter(tags=["attribution"])
+router = APIRouter(prefix="/attribution", tags=["attribution"])
 
+@router.post("/attribuer-zone", response_class=JSONResponse)
+def attribuer_zone(...):
 
 class AttributionZone(BaseModel):
     utilisateur_id: int

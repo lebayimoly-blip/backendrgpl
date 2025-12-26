@@ -15,9 +15,24 @@ from app.database import Base, engine, SessionLocal
 from app.routers import familles, utilisateurs, statistiques, pages, auth, admin, doublons, zones
 from app import models, schemas, crud
 from app.routers import attribution
+from fastapi.middleware.cors import CORSMiddleware
 
 # 📦 Initialisation de l'application
 app = FastAPI()
+
+origins = [
+    "https://glittering-halva-334c3f.netlify.app",
+    "http://localhost:3000",  # utile pour tests locaux
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 templates = Jinja2Templates(directory="app/templates")
 
 # 🔐 Gestionnaire d'erreurs HTTP
@@ -38,15 +53,17 @@ UPLOADS_DIR = os.path.join(os.path.dirname(__file__), "uploads")
 app.mount("/uploads", StaticFiles(directory=UPLOADS_DIR), name="uploads")
 
 # 🔗 Inclusion des routeurs
-app.include_router(familles.router)
-app.include_router(utilisateurs.router)
-app.include_router(statistiques.router)
-app.include_router(pages.router)
-app.include_router(auth.router)
-app.include_router(admin.router)
-app.include_router(doublons.router)
-app.include_router(zones.router)
-app.include_router(attribution.router)
+# 🔗 Inclusion des routeurs avec préfixe /api
+app.include_router(auth.router, prefix="/api")
+app.include_router(familles.router, prefix="/api")
+app.include_router(utilisateurs.router, prefix="/api")
+app.include_router(statistiques.router, prefix="/api")
+app.include_router(doublons.router, prefix="/api")
+app.include_router(zones.router, prefix="/api")
+app.include_router(attribution.router, prefix="/api")
+app.include_router(admin.router, prefix="/api")
+app.include_router(pages.router, prefix="/api")
+app.include_router(offline.router, prefix="/api")
 
 # 🗃️ Création des tables de la base de données
 Base.metadata.create_all(bind=engine)
