@@ -1,7 +1,4 @@
 
-SECRET_KEY = os.getenv("SECRET_KEY")
-ALGORITHM = os.getenv("ALGORITHM")
-
 from fastapi import Depends
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, RedirectResponse, PlainTextResponse
@@ -10,6 +7,8 @@ from fastapi.templating import Jinja2Templates
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.status import HTTP_401_UNAUTHORIZED
+import os
+from app.config import settings
 
 
 from app.database import Base, engine, SessionLocal
@@ -75,9 +74,6 @@ def test_auth(current_user: models.Utilisateur = Depends(auth.get_current_user))
 @app.get("/synchronisation", response_class=HTMLResponse)
 async def synchronisation(request: Request):
     return templates.TemplateResponse("synchronisation.html", {"request": request})
-
-from fastapi.responses import HTMLResponse
-from fastapi import Request
 
 @app.get("/offline.html", response_class=HTMLResponse)
 async def offline(request: Request):
