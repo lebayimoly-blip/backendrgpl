@@ -8,6 +8,21 @@ from passlib.context import CryptContext
 
 from app.database import get_db
 from app import models
+from app.models import Utilisateur
+
+def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> Utilisateur:
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username: str = payload.get("sub")
+        if username is None:
+            raise HTTPException(status_code=401, detail="Token invalide")
+    except JWTError:
+        raise HTTPException(status_code=401, detail="Token invalide ou expiré")
+
+    user = db.query(Utilisateur).filter(Utilisateur.username == username).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="Utilisateur non trouvé")
+    return user
 
 # 🔑 Variables d'environnement
 SECRET_KEY = os.getenv("SECRET_KEY")
@@ -67,3 +82,5 @@ def read_users_me(token: str = Depends(oauth2_scheme), db: Session = Depends(get
     if user is None:
         raise HTTPException(status_code=404, detail="Utilisateur non trouvé")
     return {"username": user.username, "role": user.role}
+
+__all__ = ["get_current_user"]

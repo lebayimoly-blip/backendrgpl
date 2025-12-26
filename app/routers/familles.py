@@ -4,13 +4,12 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from app import models, schemas, database
-from app.routers import auth
+from app.routers.auth import get_current_user
 from app.utils.files import UPLOAD_DIR, generate_family_filename
 from app.database import get_db
 
 router = APIRouter(prefix="/familles", tags=["familles"])
 templates = Jinja2Templates(directory="app/templates")
-
 
 # --- Liste des familles (HTML) ---
 from sqlalchemy.orm import joinedload
