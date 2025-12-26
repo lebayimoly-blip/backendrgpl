@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Connexion - Recensement</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #ffffff;
+            color: #1C3D7A;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .login-container {
+            background-color: #f9f9f9;
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            margin: auto;
+            text-align: center; /* centre le contenu */
+        }
+
+        .login-container img {
+            max-width: 250px; /* ou 250px selon ton besoin */
+            margin-bottom: 20px;
+
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            color: #006B3F;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+            color: #333;
+            text-align: left;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            background-color: #fff;
+            color: #333;
+        }
+
+        button {
+            margin-top: 25px;
+            width: 100%;
+            padding: 12px;
+            background-color: #FFD700;
+            color: #1C3D7A;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #e6c200;
+        }
+
+        .error {
+            color: #d00000;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        footer {
+            background-color: #1C3D7A;
+            padding: 1rem 0;
+            margin-top: 2rem;
+        }
+
+        footer p {
+            text-align: center;
+            color: white;
+            margin: 0.3rem 0;
+        }
+
+        footer span {
+            color: yellow;
+            font-weight: bold;
+        }
+
+        .logout-placeholder {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .logout-placeholder button {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+    </style>
+</head>
+<script src="/static/js/login.js"></script>
+<body>
+
+    <div class="login-container">
+        <!-- Image ajoutée -->
+        <img src="/static/images/rgpl.png" alt="Logo RGPL">
+        
+        <h1>Connexion</h1>
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+        <form method="post" action="/login">
+            <label for="username">Nom d'utilisateur :</label>
+            <input type="text" id="username" name="username" required>
+
+            <label for="password">Mot de passe :</label>
+            <input type="password" id="password" name="password" required>
+
+            <button type="submit">Se connecter</button>
+        </form>
+    </div>
+
+    <footer>
+        <p>© 2025 - RGPL Libreville</p>
+        <p>Application développée par <span>OLOUOMO LAB</span></p>
+    </footer>
+</body>
+</html>

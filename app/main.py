@@ -1,7 +1,3 @@
-import os
-from dotenv import load_dotenv
-
-load_dotenv()  # ← charge les variables du .env
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
@@ -96,7 +92,15 @@ from fastapi.responses import FileResponse
 async def service_worker():
     return FileResponse("static/service-worker.js", media_type="application/javascript")
 
-# ▶️ Lancement local (optionnel)
+from fastapi import Depends
+from sqlalchemy.orm import Session
+from app.database import get_db
+
+@app.get("/test-db")
+def test_db(db: Session = Depends(get_db)):
+    users = db.query(models.Utilisateur).all()
+    return {"utilisateurs": [u.username for u in users]}
+
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("app.main:app", host="127.0.0.1", port=8000, reload=True)
+    uvicorn.run("app.main:app", host="0.0.0.0", port=int(os.getenv("PORT", 8000)))

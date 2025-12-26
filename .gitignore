@@ -1,0 +1,29 @@
+# Environnements virtuels
+venv/
+.env
+.env.*
+
+# Fichiers Python compilés
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Logs
+*.log
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+
+# Dossiers de l'IDE
+.vscode/
+.idea/
+
+# Fichiers de test ou temporaires
+*.sqlite3
+*.db
+*.bak
+*.swp
+
+# Fichiers secrets d'exemple
+!.env.example
