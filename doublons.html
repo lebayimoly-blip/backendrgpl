@@ -1,0 +1,33 @@
+<main>
+  <h1>Doublons détectés</h1>
+
+  <div style="border:1px solid #ccc; padding:1rem; margin-bottom:1rem;">
+    <h3>Jean DUPONT — 1990-01-01</h3>
+
+    <form method="post" action="/doublons/supprimer-groupe/" style="margin-bottom: 1rem;">
+      <input type="hidden" name="prenom" value="Jean">
+      <input type="hidden" name="nom" value="Dupont">
+      <input type="hidden" name="date_naissance" value="1990-01-01">
+      <button type="submit" onclick="return confirm('Supprimer tous les doublons sauf un ?')">
+        🧹 Supprimer tous sauf un
+      </button>
+    </form>
+
+    <ul>
+      <li>
+        ID #123 — Jean Dupont — 1990-01-01
+        <form method="post" action="/doublons/supprimer/123" style="display:inline;">
+          <button type="submit" onclick="return confirm('Supprimer ce doublon ?')">🗑️ Supprimer</button>
+        </form>
+      </li>
+      <li>
+        ID #124 — Jean Dupont — 1990-01-01
+        <form method="post" action="/doublons/supprimer/124" style="display:inline;">
+          <button type="submit" onclick="return confirm('Supprimer ce doublon ?')">🗑️ Supprimer</button>
+        </form>
+      </li>
+    </ul>
+  </div>
+
+  <a href="/home" class="btn btn-primary">⬅️ Retour à l'accueil</a>
+</main>

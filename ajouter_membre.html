@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0d6efd" />
+  <title>Ajouter un membre</title>
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="icon" href="/static/icons/icon-192.png" />
+  <link rel="stylesheet" href="/static/style.css" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f9f9f9;
+      color: #1C3D7A;
+      margin: 0;
+      padding: 2rem;
+    }
+
+    main {
+      max-width: 700px;
+      margin: auto;
+      background: #fff;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    form {
+      margin-top: 1rem;
+    }
+
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.3rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    button {
+      margin-top: 1.5rem;
+      padding: 0.8rem 1.2rem;
+      background-color: #198754;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #146c43;
+    }
+
+    .btn-outline-secondary {
+      display: inline-block;
+      margin-top: 1.5rem;
+      padding: 0.6rem 1rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      text-decoration: none;
+      color: #333;
+    }
+
+    .btn-outline-secondary:hover {
+      background-color: #eee;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h2>➕ Ajouter un membre à la famille <strong>{{ famille.name }}</strong></h2>
+
+    <form method="post" action="/familles/{{ famille.id }}/members/form">
+      <label>Prénom :</label><input type="text" name="first_name" required />
+      <label>Nom :</label><input type="text" name="last_name" required />
+      <label>Rôle :</label><input type="text" name="role" />
+      <label>Date de naissance :</label><input type="date" name="date_of_birth" />
+      <label>Genre :</label>
+      <select name="gender">
+        <option value="male">Homme</option>
+        <option value="female">Femme</option>
+        <option value="other">Autre</option>
+      </select>
+      <label>Nationalité :</label><input type="text" name="nationality" />
+      <label>Type de pièce :</label><input type="text" name="id_type" />
+      <label>Numéro de pièce :</label><input type="text" name="id_number" />
+      <label>Lieu de naissance :</label><input type="text" name="place_of_birth" />
+      <label>Province :</label><input type="text" name="province" />
+      <label>Ville :</label><input type="text" name="city" value="Libreville" />
+      <label>Quartier :</label><input type="text" name="district" />
+
+      <button type="submit">✅ Ajouter le membre</button>
+    </form>
+
+    <a href="/familles/{{ famille.id }}/edit" class="btn-outline-secondary">⬅️ Retour à la famille</a>
+  </main>
+</body>
+</html>

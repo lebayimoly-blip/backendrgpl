@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0d6efd" />
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="icon" href="/static/icons/icon-192.png" />
+  <link rel="stylesheet" href="/static/style.css" />
+  <title>Menu principal</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 2rem;
+      background-color: #f0f2f5;
+    }
+
+    h1 {
+      text-align: center;
+      color: #1C3D7A;
+      font-size: 2rem;
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 20px;
+      margin-top: 2rem;
+    }
+
+    .menu-item {
+      background-color: white;
+      border-radius: 12px;
+      padding: 24px 16px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .menu-item:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+    }
+
+    .menu-item a {
+      text-decoration: none;
+      color: #1C3D7A;
+      font-weight: 600;
+      font-size: 1.1rem;
+      display: block;
+    }
+
+    .emoji {
+      font-size: 2.5rem;
+      margin-bottom: 12px;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <h1>📋 Menu principal</h1>
+
+  <div class="menu-grid">
+    <div class="menu-item">
+      <a href="/index.html">
+        <span class="emoji">📊</span>
+        Tableau de bord
+      </a>
+    </div>
+    <div class="menu-item">
+      <a href="/page-famille-edit.html">
+        <span class="emoji">🧾</span>
+        Créer une famille
+      </a>
+    </div>
+    <div class="menu-item">
+      <a href="/stats.html">
+        <span class="emoji">📈</span>
+        Statistiques
+      </a>
+    </div>
+    <div class="menu-item">
+      <a href="/zone_travail.html">
+        <span class="emoji">🗺️</span>
+        Définir une zone
+      </a>
+    </div>
+    <div class="menu-item">
+      <a href="/zones-attribuees">
+        <span class="emoji">📍</span>
+        Zones attribuées
+      </a>
+    </div>
+    <div class="menu-item">
+      <a href="/login.html">
+        <span class="emoji">🚪</span>
+        Déconnexion
+      </a>
+    </div>
+  </div>
+</body>
+</html>

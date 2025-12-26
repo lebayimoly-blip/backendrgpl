@@ -1,0 +1,37 @@
+{
+  "total_familles": 128,
+  "total_membres": 542,
+  "libreville_membres": 320,
+  "total_doublons": 8,
+  "filtre_annee": 2025,
+  "genres": {
+    "Homme": 280,
+    "Femme": 250,
+    "Autre": 12
+  },
+  "provinces": {
+    "Estuaire": 60,
+    "Ngounié": 20,
+    "Ogooué-Maritime": 18,
+    "Woleu-Ntem": 30
+  },
+  "roles": {
+    "Chef de famille": 128,
+    "Conjoint(e)": 110,
+    "Enfant": 280,
+    "Autre": 24
+  },
+  "villes": {
+    "Libreville": 312,
+    "Franceville": 80,
+    "Oyem": 60,
+    "Port-Gentil": 90
+  },
+  "naissances": {
+    "2021": 45,
+    "2022": 60,
+    "2023": 75,
+    "2024": 80,
+    "2025": 90
+  }
+}

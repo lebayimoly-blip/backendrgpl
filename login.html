@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0d6efd" />
+  <title>Connexion - Recensement</title>
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="icon" href="/static/icons/icon-192.png" />
+  <link rel="stylesheet" href="/static/style.css" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #ffffff;
+      color: #1C3D7A;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .login-container {
+      background-color: #f9f9f9;
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+      margin: auto;
+      text-align: center;
+    }
+
+    .login-container img {
+      max-width: 250px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      color: #006B3F;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+      color: #333;
+      text-align: left;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background-color: #fff;
+      color: #333;
+    }
+
+    button {
+      margin-top: 25px;
+      width: 100%;
+      padding: 12px;
+      background-color: #FFD700;
+      color: #1C3D7A;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #e6c200;
+    }
+
+    .error {
+      color: #d00000;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    footer {
+      background-color: #1C3D7A;
+      padding: 1rem 0;
+      margin-top: 2rem;
+    }
+
+    footer p {
+      text-align: center;
+      color: white;
+      margin: 0.3rem 0;
+    }
+
+    footer span {
+      color: yellow;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <img src="/static/images/rgpl.png" alt="Logo RGPL" />
+    <h1>Connexion</h1>
+
+    <!-- Message d'erreur (à afficher dynamiquement si besoin) -->
+    <p class="error" id="errorMsg" style="display:none;">Nom d'utilisateur ou mot de passe incorrect</p>
+
+    <form id="loginForm">
+      <label for="username">Nom d'utilisateur :</label>
+      <input type="text" id="username" name="username" required />
+
+      <label for="password">Mot de passe :</label>
+      <input type="password" id="password" name="password" required />
+
+      <button type="submit">Se connecter</button>
+    </form>
+  </div>
+
+  <footer>
+    <p>© 2025 - RGPL Libreville</p>
+    <p>Application développée par <span>OLOUOMO LAB</span></p>
+  </footer>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(() => console.log('✅ Service Worker enregistré'))
+      .catch(err => console.error('❌ Échec SW', err));
+  }
+</script>
+
+<script type="module">
+  import { loginUser } from "/api.js";
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.querySelector("#loginForm");
+    const errorMsg = document.getElementById("errorMsg");
+
+    if (form) {
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+
+        try {
+          const data = await loginUser(username, password);
+          localStorage.setItem("token", data.access_token);
+          window.location.href = "index.html";
+        } catch (err) {
+          errorMsg.style.display = "block";
+        }
+      });
+    }
+  });
+</script>
+
+</body>
+</html>

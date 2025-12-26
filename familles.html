@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Liste des familles</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f9f9f9;
+      color: #1C3D7A;
+      margin: 0;
+      padding: 2rem;
+    }
+
+    main {
+      max-width: 1000px;
+      margin: auto;
+      background: #fff;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    input, select {
+      padding: 0.6rem;
+      margin-top: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .btn {
+      padding: 0.6rem 1rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .btn-primary {
+      background-color: #0d6efd;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: #084298;
+    }
+
+    .btn-secondary {
+      background-color: #6c757d;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background-color: #5a6268;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      background-color: #fdfdfd;
+      margin-bottom: 1rem;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.05);
+    }
+
+    .details {
+      margin-top: 1rem;
+      background-color: #f8f9fa;
+      padding: 1rem;
+      border-radius: 6px;
+    }
+
+    img {
+      margin-top: 0.5rem;
+      border-radius: 8px;
+      max-width: 100%;
+    }
+
+    .actions {
+      margin-top: 0.8rem;
+    }
+
+    .actions a {
+      margin-right: 10px;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h2>📋 Liste des familles</h2>
+
+    <div class="filters">
+      <input type="text" id="searchInput" placeholder="🔍 Rechercher une famille..." onkeyup="filterFamilies()" />
+      <select id="provinceFilter" onchange="filterFamilies()">
+        <option value="">🏞️ Filtrer par province...</option>
+        <option value="estuaire">Estuaire</option>
+        <option value="haut-ogooué">Haut-Ogooué</option>
+        <option value="moyen-ogooué">Moyen-Ogooué</option>
+        <option value="ngounié">Ngounié</option>
+        <option value="nyanga">Nyanga</option>
+        <option value="ogooué-ivindo">Ogooué-Ivindo</option>
+        <option value="ogooué-lolo">Ogooué-Lolo</option>
+        <option value="ogooué-maritime">Ogooué-Maritime</option>
+        <option value="woleu-ntem">Woleu-Ntem</option>
+      </select>
+      <button class="btn btn-primary" onclick="exportCSV()">📥 Exporter en CSV</button>
+    </div>
+
+    <ul id="familyList">
+      {% for famille in familles %}
+      <li>
+        <button onclick="toggleDetails({{ famille.id }})">
+          <strong>{{ famille.first_name }} {{ famille.last_name }}</strong> (Famille : {{ famille.name }} — {{ famille.membres|length }} membres)
+        </button>
+        <div class="actions">
+          <a href="/familles/{{ famille.id }}" class="btn btn-sm btn-primary">👁️ Voir</a>
+          <a href="/familles/{{ famille.id }}/edit" class="btn btn-sm btn-secondary">✏️ Modifier</a>
+        </div>
+
+        <div id="details-{{ famille.id }}" class="details" style="display:none;">
+          <p><strong>Localisation :</strong> {{ famille.district }}</p>
+          <p><strong>Latitude :</strong> {{ famille.latitude }}</p>
+          <p><strong>Longitude :</strong> {{ famille.longitude }}</p>
+          <p><strong>Durée de remplissage :</strong> {{ famille.duree_remplissage }} sec</p>
+          <p><strong>Créée par :</strong> {{ famille.created_by.username }} ({{ famille.created_by.province.nom if famille.created_by.province else "N/A" }})</p>
+          <p><strong>Date de création :</strong> {{ famille.created_at.strftime('%d/%m/%Y à %H:%M') if famille.created_at else "N/A" }}</p>
+          {% if famille.photo_path %}
+          <p><strong>Photo logement :</strong></p>
+          <img src="/uploads/{{ famille.photo_path }}" alt="Photo logement" width="200" />
+          {% endif %}
+          <h4>Membres</h4>
+          <ul>
+            {% for membre in famille.membres %}
+            <li>{{ membre.first_name }} {{ membre.last_name }} ({{ membre.role }})</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+  </main>
+
+  <script>
+    function filterFamilies() {
+      let nameInput = document.getElementById("searchInput").value.toLowerCase();
+      let provinceInput = document.getElementById("provinceFilter").value.toLowerCase();
+      let items = document.querySelectorAll("#familyList li");
+
+      items.forEach(li => {
+        let text = li.innerText.toLowerCase();
+        let matchesName = nameInput === "" || text.includes(nameInput);
+        let matchesProvince = provinceInput === "" || text.includes(provinceInput);
+        li.style.display = (matchesName && matchesProvince) ? "" : "none";
+      });
+    }
+
+    function exportCSV() {
+      let rows = [["Nom personne source", "Nom famille", "Nombre membres", "Latitude", "Longitude", "Durée (sec)"]];
+      document.querySelectorAll("#familyList li").forEach(li => {
+        let text = li.innerText.split("\n")[0];
+        rows.push([text]);
+      });
+      let csvContent = "data:text/csv;charset=utf-8," + rows.map(e => e.join(",")).join("\n");
+      let link = document.createElement("a");
+      link.setAttribute("href", encodeURI(csvContent));
+      link.setAttribute("download", "familles.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function toggleDetails(id) {
+      let div = document.getElementById("details-" + id);
+      div.style.display = div.style.display === "none" ? "block" : "none";
+    }
+  </script>
+</body>
+</html>
