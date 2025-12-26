@@ -48,8 +48,9 @@ async def create_famille(
     longitude: float = Form(None),
     photo: UploadFile = File(None),
     db: Session = Depends(database.get_db),
-    current_user: models.Utilisateur = Depends(auth.get_current_user),
+    current_user: models.Utilisateur = Depends(get_current_user)
 ):
+
     db_famille = models.Famille(
         name=name,
         first_name=first_name,
