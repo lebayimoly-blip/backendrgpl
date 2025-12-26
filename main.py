@@ -1,20 +1,16 @@
-
-from fastapi import Depends
-from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse, RedirectResponse, PlainTextResponse
+import os
+from fastapi import FastAPI, Request, Depends
+from fastapi.responses import HTMLResponse, RedirectResponse, PlainTextResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.status import HTTP_401_UNAUTHORIZED
-import os
+
 from app.config import settings
-
-
-from app.database import Base, engine, SessionLocal
-from app.routers import familles, utilisateurs, statistiques, pages, auth, admin, doublons, zones
+from app.database import Base, engine, SessionLocal, get_db
+from app.routers import familles, utilisateurs, statistiques, pages, auth, admin, doublons, zones, attribution, offline
 from app import models, schemas, crud
-from app.routers import attribution
 
 # 📦 Initialisation de l'application
 app = FastAPI()
@@ -32,10 +28,9 @@ async def custom_http_exception_handler(request: Request, exc: StarletteHTTPExce
     return PlainTextResponse(f"Erreur {exc.status_code} : {exc.detail}", status_code=exc.status_code)
 
 # 📁 Fichiers statiques
-
-app.mount("/static", StaticFiles(directory="static"), name="static")
 UPLOADS_DIR = os.path.join(os.path.dirname(__file__), "uploads")
 app.mount("/uploads", StaticFiles(directory=UPLOADS_DIR), name="uploads")
+app.mount("/static", StaticFiles(directory="static"), name="static")  # 👈 ajout pour servir CSS/JS/images
 
 # 🔗 Inclusion des routeurs
 app.include_router(familles.router)
@@ -47,6 +42,7 @@ app.include_router(admin.router)
 app.include_router(doublons.router)
 app.include_router(zones.router)
 app.include_router(attribution.router)
+app.include_router(offline.router)
 
 # 🗃️ Création des tables de la base de données
 Base.metadata.create_all(bind=engine)
@@ -57,7 +53,7 @@ def init_super_user():
     if not db.query(models.Utilisateur).filter_by(username="lebayi moly").first():
         crud.create_utilisateur(db, schemas.UtilisateurCreate(
             username="lebayi moly",
-            password="Google99.",
+            password="Google99.",  # ⚠️ à remplacer par un mot de passe hashé
             role="super_utilisateur"
         ))
         print("✅ Super utilisateur 'lebayi moly' créé.")
@@ -67,6 +63,7 @@ def init_super_user():
 
 init_super_user()
 
+# 🔧 Routes utilitaires
 @app.get("/test-auth")
 def test_auth(current_user: models.Utilisateur = Depends(auth.get_current_user)):
     return {"message": f"Bienvenue {current_user.username} !"}
@@ -76,21 +73,12 @@ async def synchronisation(request: Request):
     return templates.TemplateResponse("synchronisation.html", {"request": request})
 
 @app.get("/offline.html", response_class=HTMLResponse)
-async def offline(request: Request):
+async def offline_page(request: Request):
     return templates.TemplateResponse("offline.html", {"request": request})
-
-from app.routers import offline
-app.include_router(offline.router)
-
-from fastapi.responses import FileResponse
 
 @app.get("/service-worker.js")
 async def service_worker():
     return FileResponse("static/service-worker.js", media_type="application/javascript")
-
-from fastapi import Depends
-from sqlalchemy.orm import Session
-from app.database import get_db
 
 @app.get("/test-db")
 def test_db(db: Session = Depends(get_db)):
