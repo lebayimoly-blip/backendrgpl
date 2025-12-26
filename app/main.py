@@ -30,7 +30,6 @@ async def custom_http_exception_handler(request: Request, exc: StarletteHTTPExce
 # 📁 Fichiers statiques
 UPLOADS_DIR = os.path.join(os.path.dirname(__file__), "uploads")
 app.mount("/uploads", StaticFiles(directory=UPLOADS_DIR), name="uploads")
-app.mount("/static", StaticFiles(directory="static"), name="static")  # 👈 ajout pour servir CSS/JS/images
 
 # 🔗 Inclusion des routeurs
 app.include_router(familles.router)
@@ -75,10 +74,6 @@ async def synchronisation(request: Request):
 @app.get("/offline.html", response_class=HTMLResponse)
 async def offline_page(request: Request):
     return templates.TemplateResponse("offline.html", {"request": request})
-
-@app.get("/service-worker.js")
-async def service_worker():
-    return FileResponse("static/service-worker.js", media_type="application/javascript")
 
 @app.get("/test-db")
 def test_db(db: Session = Depends(get_db)):
