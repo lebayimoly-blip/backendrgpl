@@ -33,7 +33,6 @@ async def custom_http_exception_handler(request: Request, exc: StarletteHTTPExce
 
 # 📁 Fichiers statiques
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
 UPLOADS_DIR = os.path.join(os.path.dirname(__file__), "uploads")
 app.mount("/uploads", StaticFiles(directory=UPLOADS_DIR), name="uploads")
 

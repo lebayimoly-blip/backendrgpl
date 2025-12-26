@@ -15,6 +15,7 @@ templates = Jinja2Templates(directory="app/templates")
 from sqlalchemy.orm import joinedload
 
 @router.get("/", response_class=HTMLResponse)
+@router.get("/", response_class=HTMLResponse)
 def page_utilisateurs(
     request: Request,
     db: Session = Depends(database.get_db),
@@ -134,8 +135,3 @@ def delete_utilisateur(user_id: int, db: Session = Depends(database.get_db)):
     db.delete(db_user)
     db.commit()
     return {"message": "Utilisateur supprimé"}
-
-# --- Alias pour coller au frontend ---
-@router.get("/users", response_model=list[schemas.UtilisateurResponse])
-def get_users_alias(db: Session = Depends(database.get_db)):
-    return db.query(models.Utilisateur).all()

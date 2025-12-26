@@ -8,6 +8,7 @@ from fastapi.templating import Jinja2Templates
 router = APIRouter(prefix="/doublons", tags=["doublons"])
 templates = Jinja2Templates(directory="app/templates")
 
+@router.get("/", response_class=HTMLResponse)
 @router.get("", response_class=HTMLResponse)
 def afficher_doublons(request: Request, db: Session = Depends(database.get_db)):
     # Trouver les groupes de doublons (même nom + même date de naissance, insensibles à la casse)
@@ -48,14 +49,11 @@ def supprimer_doublon(membre_id: int, db: Session = Depends(database.get_db)):
         db.commit()
     return RedirectResponse(url="/doublons/", status_code=303)
 
-
-from fastapi import Form
-
 @router.post("/supprimer-groupe/")
 def supprimer_groupe_doublons(
-    prenom: str = Form(...),
-    nom: str = Form(...),
-    date_naissance: str = Form(...),
+    prenom: str,
+    nom: str,
+    date_naissance: str,
     db: Session = Depends(database.get_db)
 ):
     membres = db.query(models.Membre).filter(

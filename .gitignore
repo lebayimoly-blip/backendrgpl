@@ -27,5 +27,3 @@ Thumbs.db
 
 # Fichiers secrets d'exemple
 !.env.example
-
-/backend/

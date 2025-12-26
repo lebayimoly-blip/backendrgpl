@@ -15,6 +15,36 @@ templates = Jinja2Templates(directory="app/templates")
 def root_redirect():
     return RedirectResponse(url="/login")
 
+@router.get("/home", response_class=HTMLResponse)
+def home_page(request: Request, db: Session = Depends(get_db)):
+    total_familles = db.query(models.Famille).count()
+    total_membres = db.query(models.Membre).count()
+    libreville_membres = db.query(models.Membre).filter(models.Membre.city.ilike("libreville")).count()
+
+    doublons_groupes = (
+        db.query(
+            func.lower(models.Membre.first_name),
+            func.lower(models.Membre.last_name),
+            models.Membre.date_of_birth
+        )
+        .group_by(
+            func.lower(models.Membre.first_name),
+            func.lower(models.Membre.last_name),
+            models.Membre.date_of_birth
+        )
+        .having(func.count(models.Membre.id) > 1)
+        .all()
+    )
+
+    stats = {
+        "total_familles": total_familles,
+        "total_membres": total_membres,
+        "libreville_membres": libreville_membres,
+        "total_doublons": len(doublons_groupes)
+    }
+
+    return templates.TemplateResponse("index.html", {"request": request, "stats": stats})
+
 @router.get("/page-familles", response_class=HTMLResponse)
 def page_familles(request: Request, db: Session = Depends(get_db)):
     familles = crud.list_familles(db)
